@@ -1,13 +1,64 @@
-import React from 'react';
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const Order = ({ pizza }) => {
+const containerVariants = {
+  hidden: {
+    x: "100vw",
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: "spring",
+      mass: 0.4,
+      damping: 8,
+      when: "beforeChildren",
+      staggerChildren: 0.4,
+    },
+  },
+};
+
+const childrenVarients = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+  exit: {
+    x: '-100vw',
+    transition: {ease : "easeInOut"}
+  }
+};
+
+const Order = ({ pizza, setShowModal }) => {
+  useEffect(()=>{
+    setTimeout(()=>{
+      setShowModal(true)
+    },5000)
+  },[setShowModal])
   return (
-    <div className="container order">
-      <h2>Thank you for your order :)</h2>
-      <p>You ordered a {pizza.base} pizza with:</p>
-      {pizza.toppings.map(topping => <div key={topping}>{topping}</div>)}
-    </div>
-  )
-}
+    <motion.div
+      className="container order"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+      <h2 exit={{ y: -1000 }}>Thank you for your order :)</h2>
+      <motion.p variants={childrenVarients}>
+        You ordered a {pizza.base} pizza with:
+      </motion.p>
+      <motion.div variants={childrenVarients}>
+        {pizza.toppings.map((topping) => (
+          <div key={topping}>{topping}</div>
+        ))}
+      </motion.div>
+    </motion.div>
+  );
+};
 
 export default Order;
